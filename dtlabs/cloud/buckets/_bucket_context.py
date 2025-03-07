@@ -1,4 +1,4 @@
-from .base import BucketService
+from ._base import BucketService
 
 class BucketContext:
     def __init__(self, bucket_service: BucketService):

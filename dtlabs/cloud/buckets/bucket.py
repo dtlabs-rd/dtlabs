@@ -1,11 +1,13 @@
 import os
-from .bucket_context import BucketContext
-from .s3_bucket import S3Bucket
-from .oci_bucket import OCIBucket
+from ._bucket_context import BucketContext
+from ._s3_bucket import S3Bucket
+from ._oci_bucket import OCIBucket
 
 class Bucket(BucketContext):
     def __init__(self, bucket: str, provider: str, **kwargs):
         """Initializes the storage service based on the specified provider (AWS or OCI)."""
+        self.bucket = bucket
+        self.provider = provider
         
         if provider == "OCI":
             required_keys = ["user_ocid", "tenancy_ocid", "region", "fingerprint", "key_path"]

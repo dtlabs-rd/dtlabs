@@ -4,12 +4,12 @@ from typing import Union
 from ._base import BucketService
 
 class S3Bucket(BucketService):
-    def __init__(self, bucket: str, aws_access_key_id: str, region_name: str, region: str):
+    def __init__(self, bucket: str, aws_access_key_id: str, aws_secret_access_key: str, region: str):
         self.bucket = bucket
         self.client = boto3.client(
             "s3",
             aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=region_name,
+            aws_secret_access_key=aws_secret_access_key,
             region_name=region,
         )
 
