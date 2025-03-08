@@ -3,7 +3,7 @@ import pika
 import uuid
 from typing import Any, Union
 
-from base_message import Message
+from dtlabs.rpc.rmq._base_message import Message
 
 class RPCClient:
     def __init__(self, host: str):

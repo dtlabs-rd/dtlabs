@@ -4,7 +4,7 @@ import threading
 import time
 
 
-class TestAddArgument(dtlabs.rpc.Message):
+class AddArgument(dtlabs.rpc.Message):
     x: int
     y: int
 
@@ -14,7 +14,6 @@ def add():
         return x + y
     return add_fn  # Return function instead of executing it immediately
 
-# NOTE: This rpc_server will cause 2 warnings when run the test. Maybe, in the future, we might need to change it.
 @pytest.fixture(scope="module")
 def rpc_server(add):
     host = "localhost"
@@ -31,15 +30,14 @@ def rpc_server(add):
 
     yield server  # Provide the server to the test
 
-    # Cleanup: Stop the RPC server after tests are done
-    server.stop_consuming()  # Ensure your RPCServer has a method to stop
+    del server
     thread.join(timeout=2)
 
 def test_rpc_client(rpc_server):
     host = "localhost"
     routing_key = "test_rpc_queue"
 
-    message = TestAddArgument(x=3, y=5)
+    message = AddArgument(x=3, y=5)
 
     client = dtlabs.rpc.RPCClient(host=host)
     response = client.call(message, routing_key=routing_key, timeout=5)  # Add timeout
