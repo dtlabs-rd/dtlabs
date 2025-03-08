@@ -1,9 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "dtlabs"
 version = "0.1.0"
-description = "Add your description here"
+description = "General Purpose Package to handle with common things that we have to do in our day-to-day life."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
     "boto3>=1.37.8",
     "oci>=2.147.0",
