@@ -1,16 +1,37 @@
-import boto3
+"""
+This module provides an implementation of BucketService for Amazon S3.
+"""
+
 import io
-from typing import Union
+from typing import Union, Dict
+import boto3
 from ._base import BucketService
 
+
 class S3Bucket(BucketService):
-    def __init__(self, bucket: str, aws_access_key_id: str, aws_secret_access_key: str, region: str):
+    """
+    Implementation of BucketService for AWS S3.
+    """
+
+    def __init__(self, bucket: str, config: Dict[str, str]):
+        """
+        Initializes the S3 bucket service.
+
+        :param bucket: The S3 bucket name.
+        :param config: Dictionary containing:
+            - aws_access_key_id
+            - aws_secret_access_key
+            - region
+        """
+        super().__init__(bucket)
+
+        self.config = config
         self.bucket = bucket
         self.client = boto3.client(
             "s3",
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key,
-            region_name=region,
+            aws_access_key_id=self.config["aws_access_key_id"],
+            aws_secret_access_key=self.config["aws_secret_access_key"],
+            region_name=self.config["region"],
         )
 
     def upload_item(self, target_path: str, item: Union[bytes, io.BytesIO]):
@@ -29,7 +50,8 @@ class S3Bucket(BucketService):
         return response["Body"].read()
 
     def list_folder(self, folder_path: str):
-        response = self.client.list_objects_v2(Bucket=self.bucket, Prefix=folder_path)
+        response = self.client.list_objects_v2(
+            Bucket=self.bucket, Prefix=folder_path)
         return [content["Key"] for content in response.get("Contents", [])]
 
     def generate_url(self, target: str, expiration=3600):
@@ -45,5 +67,6 @@ class S3Bucket(BucketService):
         if objects_to_delete:
             self.client.delete_objects(
                 Bucket=self.bucket,
-                Delete={"Objects": [{"Key": obj} for obj in objects_to_delete]}
+                Delete={"Objects": [{"Key": obj}
+                                    for obj in objects_to_delete]},
             )
