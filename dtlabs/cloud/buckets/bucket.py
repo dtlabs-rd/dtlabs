@@ -3,7 +3,6 @@ This module defines the Bucket class, which abstracts storage operations
 for AWS S3 and OCI Object Storage.
 """
 
-import os
 from typing import Dict
 from ._bucket_context import BucketContext
 from ._s3_bucket import S3Bucket
@@ -38,25 +37,18 @@ class Bucket(BucketContext):
 
     def _initialize_oci(self, bucket: str, **kwargs):
         required_keys = ["user_ocid", "tenancy_ocid",
-                         "region", "fingerprint", "key_path"]
+                         "region", "fingerprint", "private_key"]
         missing_keys = [key for key in required_keys if key not in kwargs]
         if missing_keys:
             raise ValueError(
                 f"Missing required parameters for OCI: {missing_keys}")
-
-        key_path = kwargs["key_path"]
-        if not os.path.exists(key_path):
-            raise FileNotFoundError(f"Key file not found at: {key_path}")
-
-        with open(key_path, "r", encoding="utf-8") as key_file:
-            key_content = key_file.read()
 
         config: Dict[str, str] = {
             "user": kwargs["user_ocid"],
             "tenancy": kwargs["tenancy_ocid"],
             "region": kwargs["region"],
             "fingerprint": kwargs["fingerprint"],
-            "key_content": key_content,
+            "key_content": kwargs["private_key"],
         }
         return OCIBucket(bucket=bucket, config=config)
 

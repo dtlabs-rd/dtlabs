@@ -17,7 +17,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "pylint>=3.3.5",
+    "pylint>=3.2.7",
     "pytest>=8.3.5",
     "python-dotenv>=1.0.1",
 ]
