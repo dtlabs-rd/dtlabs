@@ -41,7 +41,10 @@ class Bucket(BucketContext):
             f"Provider '{provider}' not supported. Use 'AWS' or 'OCI'.")
 
     def _initialize_oci(self, bucket: str, **kwargs):
-        """Initializes OCI Object Storage, handling both local and instance environments."""
+        """Initializes OCI Object Storage only if provider is OCI."""
+        if self.provider != "OCI":
+            return None
+
         if self._is_running_in_oci():
             print("✅ Running inside OCI. Using Instance Principals authentication.")
             signer = oci.auth.signers.InstancePrincipalsSecurityTokenSigner()
@@ -81,7 +84,10 @@ class Bucket(BucketContext):
         return OCIBucket(bucket=bucket, config=config)
 
     def _initialize_aws(self, bucket: str, **kwargs):
-        """Initializes AWS S3 bucket."""
+        """Initializes AWS S3 bucket only if provider is AWS."""
+        if self.provider != "AWS":
+            return None
+
         kwargs.setdefault("aws_access_key_id", os.getenv("AWS_ACCESS_KEY_ID"))
         kwargs.setdefault("aws_secret_access_key",
                           os.getenv("AWS_SECRET_ACCESS_KEY"))
